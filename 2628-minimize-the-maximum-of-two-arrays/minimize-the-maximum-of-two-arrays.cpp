@@ -1,7 +1,7 @@
 class Solution {
 public:
     int minimizeSet(int d1, int d2, int uc1, int uc2) {
-        int s=1,e=INT_MAX;
+        long long s=1,e=INT_MAX;
         long long lcm = (long long)d1*d2/gcd(d1, d2);
         int ans=1;
         while(s<=e){
