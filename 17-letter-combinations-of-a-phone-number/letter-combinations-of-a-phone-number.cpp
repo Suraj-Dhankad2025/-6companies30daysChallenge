@@ -1,30 +1,30 @@
 class Solution {
 public:
     vector<string>ans;
-    void find(int i,string temp, string s, vector<string>&v){
+    void find(int i,string temp, string s, map<int, string>&m){
         if(i==s.size()){
             ans.push_back(temp);
             return ;
         }
-        for(auto it:v[s[i]-'0'-2]){
+        for(auto it:m[s[i]-'0']){
             temp.push_back(it);
-            find(i+1, temp, s, v);
+            find(i+1, temp, s, m);
             temp.pop_back();
         }
     }
     vector<string> letterCombinations(string digits) {
-        vector<string>v(8);
+        map<int, string>m;
         int n = digits.size();
         if(n==0)return {};
-        v[0] = "abc";
-        v[1] = "def";
-        v[2] = "ghi";
-        v[3] = "jkl";
-        v[4] = "mno";
-        v[5] = "pqrs";
-        v[6] = "tuv";
-        v[7] = "wxyz";
-        find(0, "", digits, v);
+        m[2] = "abc";
+        m[3] = "def";
+        m[4] = "ghi";
+        m[5] = "jkl";
+        m[6] = "mno";
+        m[7] = "pqrs";
+        m[8] = "tuv";
+        m[9] = "wxyz";
+        find(0, "", digits, m);
         return ans;
     }
 };
