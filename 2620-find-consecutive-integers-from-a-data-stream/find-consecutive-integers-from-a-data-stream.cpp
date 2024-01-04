@@ -1,22 +1,23 @@
 class DataStream {
 public:
-    int val;
+      int val;
     int K;
     int cnt;
     DataStream(int value, int k) {
-        this->cnt = 0;
-        this->K = k;
         this->val = value;
+        this->K = k;
+        this->cnt = 0;
     }
     
     bool consec(int num) {
-        if(val==num){
+        if(num==val){
             cnt++;
         }
         else{
             cnt = 0;
         }
-        return cnt>=K;
+        if(cnt>=K)return true;
+        return false;
     }
 };
 
