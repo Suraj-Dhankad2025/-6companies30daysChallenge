@@ -1,66 +1,31 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution {
+private:
+    int maxDistance = 0;
 public:
-    int amountOfTime(TreeNode* root, int start) {
-        map<TreeNode*, TreeNode*>m;
-        queue<TreeNode* >q;
-        q.push(root);
-        TreeNode* startNode = NULL;
-        while(!q.empty()){
-            int s = q.size();
-            while(s--){
-                TreeNode* node = q.front();
-                q.pop();
-                if(node->val==start){
-                    startNode = node;
-                }
-                if(node->left){
-                    m[node->left] = node;
-                    q.push(node->left);
-                }
-                if(node->right){
-                    m[node->right] = node;
-                    q.push(node->right);
-                }
-            }
+    int traverse(TreeNode* root, int start) {
+        int depth = 0;
+        if (root == nullptr) {
+            return depth;
         }
-        int time=0;
-        queue<TreeNode* >q1;
-        q1.push(startNode);
-        map<TreeNode*, int>vis;
-        vis[startNode] = 1;
-        while(!q1.empty()){
-            int s = q1.size();
-            time++;
-            while(s--){
-                TreeNode* node = q1.front();
-                q1.pop();
-                if(node->left && !vis[node->left]){
-                    q1.push(node->left);
-                    vis[node->left] = 1;
-                    
-                }
-                if(node->right && !vis[node->right]){
-                    q1.push(node->right);
-                    vis[node->right] = 1;
-                   
-                }
-                if(m[node] && !vis[m[node]]){
-                    q1.push(m[node]);
-                    vis[m[node]] = 1;
-                }
-            }
+
+        int leftDepth = traverse(root->left, start);
+        int rightDepth = traverse(root->right, start);
+
+        if (root->val == start) {
+            maxDistance = max(leftDepth, rightDepth);
+            depth = -1;
+        } else if (leftDepth >= 0 && rightDepth >= 0) {
+            depth = max(leftDepth, rightDepth) + 1;
+        } else {
+            int distance = abs(leftDepth) + abs(rightDepth);
+            maxDistance = max(maxDistance, distance);
+            depth = min(leftDepth, rightDepth) - 1;
         }
-        return time-1;
+
+        return depth;
     }
-};
+    int amountOfTime(TreeNode* root, int start) {
+        traverse(root, start);
+        return maxDistance;
+    }
+}; 
