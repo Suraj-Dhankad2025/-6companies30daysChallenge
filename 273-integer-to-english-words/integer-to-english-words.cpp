@@ -21,7 +21,6 @@ public:
         }
         return "";
     }
-
     string numberToWords(int num) {
         if (num == 0) 
             return "Zero";
