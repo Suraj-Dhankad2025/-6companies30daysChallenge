@@ -3,40 +3,94 @@
 using namespace std;
 
 // } Driver Code Ends
+
+class DisjointSet{
+    vector<int>size, parent,rank;
+    public:
+    DisjointSet(int n){
+        size.resize(n+1);
+        parent.resize(n+1);
+        rank.resize(n+1);
+        for(int i=0; i<=n; i++){
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+    int findUParent(int node){
+        if(node==parent[node]){
+            return node;
+        }
+        return parent[node] = findUParent(parent[node]);
+    }
+    void unionByRank(int u, int v){
+        int ulp_u = findUParent(u);
+        int ulp_v = findUParent(v);
+        if(ulp_u==ulp_v){
+            return ;
+        }
+        if(rank[ulp_v]>rank[ulp_u]){
+            parent[ulp_u] = ulp_v;
+        }
+        else if(rank[ulp_v]<rank[ulp_u]){
+            parent[ulp_v] = ulp_u;
+        }
+        else{
+            parent[ulp_v] = ulp_u;
+            rank[ulp_u]++;
+        }
+    }
+    void unionBySize(int u, int v){
+        int ulp_u = findUParent(u);
+        int ulp_v = findUParent(v);
+        if(ulp_u==ulp_v){
+            return ;
+        }
+        if(size[ulp_v]>size[ulp_u]){
+            parent[ulp_u] = ulp_v;
+            size[ulp_v]+=size[ulp_u];
+        }
+        else{
+            parent[ulp_v] = ulp_u;
+            size[ulp_u]+=size[ulp_v];
+        }
+    }
+};
 class Solution
 {
 	public:
-	//Function to find sum of weights of edges of the Minimum Spanning Tree.
     int spanningTree(int V, vector<vector<int>> adj[])
     {
-        
         priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, 
-            greater<pair<int, pair<int, int>>>>pq;
-            
-        vector<bool>isMST(V, 0);
-        vector<int>parent(V); // to find the edges of MST if required
-        int cost = 0;
-        pq.push({0,{0, -1}});
+        greater<pair<int, pair<int, int>>>>pq;
         
+        DisjointSet ds(V);
+        
+        for (int i = 0; i < V; i++) {
+            for (auto edge : adj[i]) {
+                int u = i;
+                int v = edge[0];
+                int wt = edge[1];
+                pq.push({wt, {u, v}});
+            }
+        }
+        
+        int edges = 0;
+        int ans = 0;
         while(!pq.empty()){
             int wt = pq.top().first;
-            int node = pq.top().second.first;
-            int par = pq.top().second.second;
+            int u = pq.top().second.first;
+            int v = pq.top().second.second;
             pq.pop();
-            if(!isMST[node]){
-                isMST[node] = 1;
-                cost+=wt;
-                parent[node] = par;
-                for(int j=0; j<adj[node].size(); j++){
-                    int newNode = adj[node][j][0];
-                    int newWeight = adj[node][j][1];
-                    if(!isMST[newNode]){
-                        pq.push({newWeight, {newNode, node}});
-                    }
-                }
-            } 
+            if(ds.findUParent(u)!=ds.findUParent(v)){
+                ans+=wt;
+                ds.unionBySize(u, v);
+                edges++;
+            }
+            if(edges == V-1){
+                break;
+            }
         }
-        return cost;
+        return ans;
     }
 };
 
